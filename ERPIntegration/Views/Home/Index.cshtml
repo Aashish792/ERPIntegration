@@ -2,47 +2,92 @@
 @using Newtonsoft.Json
 
 @{
-    // If you are not using a layout, you can leave Layout = null;
     Layout = null;
 
-    // Deserialize the JSON into a list of dynamic objects.
+    // Prepare an empty list for customers and a flag for parse errors.
     var customers = new List<dynamic>();
+    bool parseError = false;
+
     if (!string.IsNullOrEmpty(Model.CustomersJson))
     {
-        customers = JsonConvert.DeserializeObject<List<dynamic>>(Model.CustomersJson);
+        // Check if the CustomersJson appears to be HTML instead of JSON.
+        if(Model.CustomersJson.TrimStart().StartsWith("<"))
+        {
+            parseError = true;
+        }
+        else
+        {
+            try
+            {
+                customers = JsonConvert.DeserializeObject<List<dynamic>>(Model.CustomersJson);
+            }
+            catch (Exception)
+            {
+                parseError = true;
+            }
+        }
     }
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Home - Token & Customer List</title>
-    <!-- Optionally, include Bootstrap for nicer styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Concept Customer List</title>
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <style>
         body {
             margin: 20px;
             font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
-
+        .container {
+            max-width: 900px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+        }
         .table {
             margin-top: 20px;
-        }
-
-        h1, h2 {
-            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Token & Customer List</h1>
-        <p>Your token is: <strong>@Model.Token</strong></p>
+        <div class="header">
+            <h1>Concept Customer List</h1>
+            <!-- Logout button with a form -->
+            <form id="logoutForm" method="post" action="@Url.Action("Logout", "Home")">
+                <input type="hidden" name="token" value="@Model.Token" />
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </div>
+
+        <p><strong>Access Token:</strong> <span id="tokenText">[SECURED]</span></p>
+
         <h2>Customer List</h2>
-        @if (customers != null && customers.Any())
+        @if (parseError)
+        {
+            <div class="alert alert-danger" role="alert">
+                Error parsing customer data. The provided data is not valid JSON.
+            </div>
+        }
+        else if (customers != null && customers.Any())
         {
             <table class="table table-bordered table-striped">
-                <thead>
+                <thead class="thead-dark">
                     <tr>
                         <th>Customer ID</th>
                         <th>Customer Name</th>
@@ -52,8 +97,8 @@
                     @foreach (var customer in customers)
                     {
                         <tr>
-                            <td>@customer.CustomerID</td>
-                            <td>@customer.CustomerName</td>
+                            <td>@customer.CustomerID.value</td>
+                            <td>@customer.CustomerName.value</td>
                         </tr>
                     }
                 </tbody>
@@ -64,5 +109,9 @@
             <p>No customers found.</p>
         }
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

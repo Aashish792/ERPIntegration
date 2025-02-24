@@ -1,5 +1,4 @@
-﻿using ERPIntegration.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace ERPIntegration.Services
 {
@@ -7,5 +6,6 @@ namespace ERPIntegration.Services
     {
         Task<string> GetTokenAsync();
         Task<string> GetCustomersJsonAsync(string token);
+        Task LogoutAsync(string token); 
     }
 }
