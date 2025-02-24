@@ -70,9 +70,9 @@
             <h1>Concept Customer List</h1>
             <!-- Logout button with a form -->
             <form id="logoutForm" method="post" action="@Url.Action("Logout", "Home")">
-                <input type="hidden" name="token" value="@Model.Token" />
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
+            <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+
         </div>
 
         <p><strong>Access Token:</strong> <span id="tokenText">[SECURED]</span></p>

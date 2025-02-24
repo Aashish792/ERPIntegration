@@ -1,6 +1,9 @@
-﻿using ERPIntegration.Services;
+﻿using ERPIntegration.Models;
+using ERPIntegration.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace ERPIntegration.Controllers
@@ -16,14 +19,26 @@ namespace ERPIntegration.Controllers
             _logger = logger;
         }
 
+        // ✅ Fix: Safely retrieve the session value
         public async Task<IActionResult> Index()
         {
             try
             {
-                string token = await _erpService.GetTokenAsync();
-                string customersJson = await _erpService.GetCustomersJsonAsync(token);
+                string? token = HttpContext.Session.GetString("Token");
 
-                var viewModel = new ERPIntegration.Models.TokenAndCustomerViewModel
+                if (string.IsNullOrEmpty(token))
+                {
+                    _logger.LogInformation("No token found in session. Fetching a new one.");
+                    token = await _erpService.GetTokenAsync();
+                    HttpContext.Session.SetString("Token", token);
+                }
+                else
+                {
+                    _logger.LogInformation("Using existing session token.");
+                }
+
+                string customersJson = await _erpService.GetCustomersJsonAsync(token);
+                var viewModel = new TokenAndCustomerViewModel
                 {
                     Token = token,
                     CustomersJson = customersJson
@@ -31,25 +46,32 @@ namespace ERPIntegration.Controllers
 
                 return View(viewModel);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching customer data.");
-                return View("Error", "An error occurred. Please try again later.");
+                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
             }
         }
 
-        public async Task<IActionResult> Logout(string token)
+        [HttpPost]
+        public IActionResult Logout()
         {
             try
             {
-                await _erpService.LogoutAsync(token);
-                return RedirectToAction("Index");
+                HttpContext.Session.Clear(); // ✅ Clears session
+                _logger.LogInformation("User logged out. Session cleared.");
+                return RedirectToAction("LogoutSuccess");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error logging out.");
-                return View("Error", "Logout failed. Please try again.");
+                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
             }
+        }
+
+        public IActionResult LogoutSuccess()
+        {
+            return View();
         }
     }
 }

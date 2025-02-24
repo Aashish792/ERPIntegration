@@ -1,26 +1,43 @@
 using ERPIntegration.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add MVC services to the container.
+// ✅ Add logging to help debug session issues
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+// ✅ Register services
 builder.Services.AddControllersWithViews();
 
-// Register HttpClient and our ERP integration service.
+// ✅ Register session services
+builder.Services.AddDistributedMemoryCache(); // Required for session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Security best practice
+    options.Cookie.IsEssential = true; // Ensures session works without user consent
+});
+
+// ✅ Register the ERP service for dependency injection
 builder.Services.AddHttpClient<IErpIntegrationService, ErpIntegrationService>();
-builder.Services.AddScoped<IErpIntegrationService, ErpIntegrationService>();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
+// ✅ Enable session BEFORE authorization
+app.UseSession();
 
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
-// Set the default route to HomeController's Index action.
+// ✅ Set up the default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
