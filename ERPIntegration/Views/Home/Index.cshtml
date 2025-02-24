@@ -1,22 +1,68 @@
 ﻿@model ERPIntegration.Models.TokenAndCustomerViewModel
+@using Newtonsoft.Json
+
+@{
+    // If you are not using a layout, you can leave Layout = null;
+    Layout = null;
+
+    // Deserialize the JSON into a list of dynamic objects.
+    var customers = new List<dynamic>();
+    if (!string.IsNullOrEmpty(Model.CustomersJson))
+    {
+        customers = JsonConvert.DeserializeObject<List<dynamic>>(Model.CustomersJson);
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>Home - Token & Customer List</title>
+    <!-- Optionally, include Bootstrap for nicer styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <style>
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ccc;
-            overflow-x: auto;
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Token & Customer List</h1>
-    <p>Your token is: <strong>@Model.Token</strong></p>
-    <h2>Customer List (Raw JSON)</h2>
-    <pre>@Model.CustomersJson</pre>
+    <div class="container">
+        <h1>Token & Customer List</h1>
+        <p>Your token is: <strong>@Model.Token</strong></p>
+        <h2>Customer List</h2>
+        @if (customers != null && customers.Any())
+        {
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Customer Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in customers)
+                    {
+                        <tr>
+                            <td>@customer.CustomerID</td>
+                            <td>@customer.CustomerName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No customers found.</p>
+        }
+    </div>
 </body>
 </html>
