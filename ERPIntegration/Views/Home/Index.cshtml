@@ -1,0 +1,22 @@
+﻿@model ERPIntegration.Models.TokenAndCustomerViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Home - Token & Customer List</title>
+    <style>
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Token & Customer List</h1>
+    <p>Your token is: <strong>@Model.Token</strong></p>
+    <h2>Customer List (Raw JSON)</h2>
+    <pre>@Model.CustomersJson</pre>
+</body>
+</html>
