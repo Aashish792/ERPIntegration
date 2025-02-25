@@ -19,7 +19,7 @@ namespace ERPIntegration.Controllers
             _logger = logger;
         }
 
-        // ✅ Fix: Safely retrieve the session value
+    
         public async Task<IActionResult> Index()
         {
             try
@@ -58,7 +58,7 @@ namespace ERPIntegration.Controllers
         {
             try
             {
-                HttpContext.Session.Clear(); // ✅ Clears session
+                HttpContext.Session.Clear(); 
                 _logger.LogInformation("User logged out. Session cleared.");
                 return RedirectToAction("LogoutSuccess");
             }
