@@ -16,7 +16,10 @@ The **ERP Integration System** is a .NET Core web application designed to authen
 
 ## Project Screenshot
 
-*(Paste your project screenshots here)*
+<img width="1424" alt="Screenshot 2025-02-24 at 8 08 41 PM" src="https://github.com/user-attachments/assets/38310aa1-ca9d-460a-8258-153097adff2d" />
+
+<img width="1460" alt="Screenshot 2025-02-24 at 8 10 36 PM" src="https://github.com/user-attachments/assets/2453e4aa-656d-43d9-82ef-0dd1e17b1996" />
+
 
 ---
 
@@ -67,9 +70,9 @@ Create an **appsettings.json** file in the project root with the following struc
     }
   },
   "Authentication": {
-    "TokenUrl": "https://backend.example.com/identity/connect/token",
-    "LogoutUrl": "https://backend.example.com/entity/auth/logout",
-    "CustomersUrl": "https://backend.example.com/entity/Default/23.200.001/Customer?$select=CustomerID,CustomerName",
+    "TokenUrl": "<TokenUrl>",
+    "LogoutUrl": "<LogoutUrl>",
+    "CustomersUrl": "<CustomersUrl>",
     "ClientId": "your-client-id",
     "ClientSecret": "your-client-secret",
     "Username": "your-username",
@@ -80,8 +83,6 @@ Create an **appsettings.json** file in the project root with the following struc
   "AllowedHosts": "*"
 }
 ```
-
-> ⚠️ **DO NOT COMMIT** credentials to Git. Use environment variables or a secrets manager.
 
 ---
 
@@ -219,12 +220,5 @@ We welcome contributions! Please follow these steps:
 4. **Push to GitHub** (`git push origin feature-xyz`)
 5. **Submit a pull request**
 
-
-### 📝 Changes and Improvements:
-✅ Added **Project Screenshot** section where you can paste your UI images.  
-✅ Kept the **clean and professional structure**.  
-✅ Included **security best practices**.  
-✅ Maintained a **proper markdown format** for readability.  
-✅ Future-proofed for enhancements and open-source contributions.  
 
 [text](README.md)
