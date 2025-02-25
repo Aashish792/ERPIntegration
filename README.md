@@ -220,5 +220,3 @@ We welcome contributions! Please follow these steps:
 4. **Push to GitHub** (`git push origin feature-xyz`)
 5. **Submit a pull request**
 
-
-[text](README.md)
