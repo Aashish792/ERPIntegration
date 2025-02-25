@@ -1,4 +1,5 @@
 ﻿using ERPIntegration.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,20 +12,33 @@ namespace ERPIntegration.Services
     public class ErpIntegrationService : IErpIntegrationService
     {
         private readonly HttpClient _client;
-        private static readonly string customersUrl = "https://backend.barcodefactory.com/Acumatica_DB_TEST/entity/Default/23.200.001/Customer?$select=CustomerClass,CustomerID,CustomerName&$top=5";
-        private readonly string tokenUrl = "https://backend.barcodefactory.com/Acumatica_DB_TEST/identity/connect/token";
-        private readonly string logoutUrl = "https://backend.barcodefactory.com/Acumatica_DB_TEST/entity/auth/logout"; // Logout endpoint
+        private readonly IConfiguration _configuration;
 
-        private readonly string clientId = "69C45D2E-D739-4A55-54CB-E46A439FAE87@Company";
-        private readonly string clientSecret = "zIwzuGP2Pb4O3-KEhSb69w";
-        private readonly string username = "admin";
-        private readonly string password = "PARprint141__";
-        private readonly string grantType = "password";
-        private readonly string scope = "api";
+        private readonly string tokenUrl;
+        private readonly string logoutUrl;
+        private readonly string customersUrl;
+        private readonly string clientId;
+        private readonly string clientSecret;
+        private readonly string username;
+        private readonly string password;
+        private readonly string grantType;
+        private readonly string scope;
 
-        public ErpIntegrationService(HttpClient client)
+        public ErpIntegrationService(HttpClient client, IConfiguration configuration)
         {
             _client = client;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
+            // ✅ Fix: Use null-coalescing operator (??) to provide default values
+            tokenUrl = _configuration["Authentication:TokenUrl"] ?? throw new InvalidOperationException("Token URL is missing in configuration.");
+            logoutUrl = _configuration["Authentication:LogoutUrl"] ?? throw new InvalidOperationException("Logout URL is missing in configuration.");
+            customersUrl = _configuration["Authentication:CustomersUrl"] ?? throw new InvalidOperationException("Customers URL is missing in configuration.");
+            clientId = _configuration["Authentication:ClientId"] ?? throw new InvalidOperationException("ClientId is missing in configuration.");
+            clientSecret = _configuration["Authentication:ClientSecret"] ?? throw new InvalidOperationException("ClientSecret is missing in configuration.");
+            username = _configuration["Authentication:Username"] ?? throw new InvalidOperationException("Username is missing in configuration.");
+            password = _configuration["Authentication:Password"] ?? throw new InvalidOperationException("Password is missing in configuration.");
+            grantType = _configuration["Authentication:GrantType"] ?? throw new InvalidOperationException("GrantType is missing in configuration.");
+            scope = _configuration["Authentication:Scope"] ?? throw new InvalidOperationException("Scope is missing in configuration.");
         }
 
         public async Task<string> GetTokenAsync()
