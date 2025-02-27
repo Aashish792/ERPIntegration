@@ -201,15 +201,6 @@ ERPIntegration/
 
 ---
 
-## Future Enhancements
-
-- ✅ Implement database storage for customer data
-- ✅ Introduce role-based authentication
-- ✅ Improve front-end design with React.js
-- ✅ Add unit testing for services
-
----
-
 ## Contributing
 
 We welcome contributions! Please follow these steps:
