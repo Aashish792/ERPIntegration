@@ -1,4 +1,4 @@
-# ERP Integration System
+# Acumatica ERP Integration System (Login/Logout)
 
 ## Overview
 
